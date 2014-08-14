@@ -49,7 +49,7 @@ public class Control extends BukkitRunnable implements IControl {
 		}
 	}
 
-	protected long timeout = 30000;
+	protected long timeout = 30000,tineOne=15000;
 	protected long lastTime = 0;
 
 	protected Timer time = new Timer(timeout);
@@ -61,7 +61,7 @@ public class Control extends BukkitRunnable implements IControl {
 			time.start();
 
 			if (jugadores == partida.getMax()) {
-				time.changeTimeOut(15000);
+				time.changeTimeOut(tineOne);
 			}
 		} else if (jugadores >= partida.getMax() / 2 
 				&& jugadores!=0) {
@@ -98,7 +98,7 @@ public class Control extends BukkitRunnable implements IControl {
 	}
 
 	private BarRun run = null;
-
+	
 	private void timer() {
 		if (partida.getTime() <= 0) {
 			Player[] pl = toArray();

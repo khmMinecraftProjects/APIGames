@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.khmdev.APIAuxiliar.ConstantesAuxiliar;
+import me.khmdev.APIAuxiliar.Effects.BossBar;
 import me.khmdev.APIAuxiliar.Inventory.InventoryBase;
 import me.khmdev.APIAuxiliar.Inventory.StandarInventorys;
 import me.khmdev.APIAuxiliar.Players.NamesTags;
@@ -251,7 +252,6 @@ public abstract class Partida implements IPartida, Datos {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public void spawnJugador(Jugador jj) {
 		jj.getPlayer().teleport(spawnZone(jj));
 		Equipar(jj);
@@ -428,13 +428,14 @@ public abstract class Partida implements IPartida, Datos {
 			sign.update();
 		}
 		if (segura != null) {
-			String s="";
+			String s = "";
 			if (getEstado() == Estado.EsperandoJugadores) {
-				s=ChatColor.GREEN + getEstado().toString();
+				s = ChatColor.GREEN + getEstado().toString();
 			} else {
-				s=ChatColor.RED + getEstado().toString();
+				s = ChatColor.RED + getEstado().toString();
 			}
-			segura.actualizarSign("", s,ChatColor.YELLOW + "" + getNJug() + "/" + getMax(), "");
+			segura.actualizarSign("", s, ChatColor.YELLOW + "" + getNJug()
+					+ "/" + getMax(), "");
 		}
 	}
 
@@ -543,6 +544,8 @@ public abstract class Partida implements IPartida, Datos {
 	}
 
 	public void JugadorAbandona(Jugador j) {
+		BossBar.removeBarPlayer(j.getPlayer());
+
 		// API.getInstance().getSpam().sendMensaje(j.getPlayer());
 		API.removeMetadata(j.getPlayer(), "Jugando");
 		MarcadoresSQL.addMarcador(j);
