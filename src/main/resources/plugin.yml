@@ -1,0 +1,34 @@
+name: ${project.name}
+author: khmDEV
+main: ${project.groupId}.${project.artifactId}.init
+version: ${project.version}
+commands:
+   apig:
+      permission: apig.command
+      permission-message: No tienes permisos <permission>
+   kits:
+      permission: kits.command
+      permission-message: No tienes permisos <permission>
+   ventajas:
+      permission: ventajas.command
+      permission-message: No tienes permisos <permission>
+   abandonar:
+      permission: abandonar.command
+      permission-message: No tienes permisos <permission>
+permissions:
+         apig.command:
+                 default: op
+         kits.command:
+                 default: op
+         ventajas.command:
+                 default: op
+         abandonar.command:
+                 default: op
+         setterEquipo.apig:
+                 default: op
+         vipkit.apig:
+                 default: op
+         listen.all:
+                 default: op
+softdepend: [APIEconomy,APIMaps,APIAuxiliar]
+Depend: [APIEconomy,APIMaps,APIAuxiliar]
