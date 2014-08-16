@@ -67,9 +67,9 @@ public class CustomSignGames extends CustomSign {
 					if (!p.JugadorEsta(event.getPlayer().getName())) {
 						event.getPlayer().sendMessage(
 								"Entrando a partida " + p.getName());
-						p.nuevoJugador(event.getPlayer());
 						event.getPlayer().playEffect(event.getPlayer().getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 30);
 						event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.LEVEL_UP, 10, 10);
+						p.nuevoJugador(event.getPlayer());
 					} else {
 						event.getPlayer().sendMessage(
 								"Ya esta en la partida " + p.getName());
