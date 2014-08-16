@@ -419,7 +419,7 @@ public abstract class Partida implements IPartida, Datos {
 							+ ChatColor.BLACK + "]");
 			sign.setLine(1, ChatColor.YELLOW + name);
 			if (getEstado() == Estado.EsperandoJugadores) {
-				sign.setLine(2, ChatColor.GREEN + getEstado().toString());
+				sign.setLine(2, ChatColor.GREEN + "Esperando...");
 			} else {
 				sign.setLine(2, ChatColor.RED + getEstado().toString());
 
