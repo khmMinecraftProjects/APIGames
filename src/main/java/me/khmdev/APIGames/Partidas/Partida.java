@@ -254,12 +254,12 @@ public abstract class Partida implements IPartida, Datos {
 
 	public void spawnJugador(Jugador jj) {
 		jj.getPlayer().teleport(spawnZone(jj));
-		Equipar(jj);
 		for (PotionEffect effect : jj.getPlayer().getActivePotionEffects()) {
 			jj.getPlayer().removePotionEffect(effect.getType());
 		}
 		jj.getPlayer().setMaxHealth(20);
 		jj.getPlayer().setHealth(20);
+		Equipar(jj);
 	}
 
 	public void clearJugadores() {
@@ -400,11 +400,11 @@ public abstract class Partida implements IPartida, Datos {
 
 	public void actualizarSign(SignChangeEvent event) {
 		event.setLine(0,
-				ChatColor.BLACK + "[" + ChatColor.AQUA + game.getName()
+				ChatColor.BLACK + "[" + ChatColor.DARK_AQUA + game.getAlias()
 						+ ChatColor.BLACK + "]");
-		event.setLine(1, ChatColor.DARK_PURPLE + name);
+		event.setLine(1, ChatColor.YELLOW + name);
 		if (getEstado() == Estado.EsperandoJugadores) {
-			event.setLine(2, ChatColor.GREEN + getEstado().toString());
+			event.setLine(2, ChatColor.GREEN + "Esperando...");
 		} else {
 			event.setLine(2, ChatColor.RED + getEstado().toString());
 
@@ -415,9 +415,9 @@ public abstract class Partida implements IPartida, Datos {
 	public void actualizarSign() {
 		if (sign != null) {
 			sign.setLine(0,
-					ChatColor.BLACK + "[" + ChatColor.AQUA + game.getName()
+					ChatColor.BLACK + "[" + ChatColor.DARK_AQUA + game.getName()
 							+ ChatColor.BLACK + "]");
-			sign.setLine(1, ChatColor.DARK_PURPLE + name);
+			sign.setLine(1, ChatColor.YELLOW + name);
 			if (getEstado() == Estado.EsperandoJugadores) {
 				sign.setLine(2, ChatColor.GREEN + getEstado().toString());
 			} else {
@@ -552,6 +552,9 @@ public abstract class Partida implements IPartida, Datos {
 		scores.removePlayer(j.getPlayer());
 		if (j.getLastBoard() != null) {
 			j.getLastBoard().addPlayer(j.getPlayer());
+		}
+		for (PotionEffect pot : j.getPlayer().getActivePotionEffects()) {
+			j.getPlayer().removePotionEffect(pot.getType());
 		}
 		jugadores.remove(j.getPlayer().getName());
 		resetDisplay(j);

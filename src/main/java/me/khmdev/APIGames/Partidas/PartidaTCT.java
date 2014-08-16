@@ -8,7 +8,6 @@ import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 
 import me.khmdev.APIAuxiliar.Players.AuxPlayer;
 import me.khmdev.APIBase.API;
@@ -24,19 +23,20 @@ import me.khmdev.APIGames.Scores.BoardTCT;
 import me.khmdev.APIGames.lang.Lang;
 import me.khmdev.APIMaps.Auxiliar.Zona;
 
-public abstract class PartidaTCT extends Partida{
+public abstract class PartidaTCT extends Partida {
 
 	protected boolean inicio = false;
+
 	public PartidaTCT(String s, IGame game2, API ap) {
 		super(s, game2, ap);
 		ReSp = new LinkedList<Location>();
 		actualizarSign();
 	}
 
-	protected void setEquipo(Jugador j){
+	protected void setEquipo(Jugador j) {
 		j.setEquipo(Equipo.Ninguno);
 	}
-	
+
 	public String Datos() {
 		String s = "";
 		s += ok(mapa) + "Mapa: " + dat(mapa) + "\n";
@@ -62,27 +62,19 @@ public abstract class PartidaTCT extends Partida{
 		control = new Control(this, game);
 	}
 
-
 	public void JugadorAbandona(Jugador j) {
 		super.JugadorAbandona(j);
 	}
 
-	public boolean nuevoJugador(Player p) {
-
-		if (Max <= jugadores.size()) {
-			return false;
-		}
-		Jugador jug = newIJ();
-		jug.setEquipo(Equipo.Ninguno);
-
-		jug.setPlayer(p);
-		jug.setPartida(this);
-		JugadorEntra(jug);
-		spawnZS(p);
-		return true;
-	}
-
-
+	/*
+	 * public boolean nuevoJugador(Player p) {
+	 * 
+	 * if (Max <= jugadores.size()) { return false; } Jugador jug = newIJ();
+	 * jug.setEquipo(Equipo.Ninguno);
+	 * 
+	 * jug.setPlayer(p); jug.setPartida(this); JugadorEntra(jug); spawnZS(p);
+	 * return true; }
+	 */
 
 	int numS = 100;
 	boolean fin = false;
@@ -147,44 +139,46 @@ public abstract class PartidaTCT extends Partida{
 	public void ganador(Jugador j) {
 
 		if (j.getPuntuacion() >= pMax) {
-			sendAll(Lang.get("fin_winnerPlayer").replace("%Winner%", j.toString()));
+			sendAll(Lang.get("fin_winnerPlayer").replace("%Winner%",
+					j.toString()));
 			gana(j);
 			finalizar();
 
 		}
 	}
-	
-	public void ganadores(List<IJugador> j) {
-		Enumeration<IJugador> it=getJugadores();
 
-		while(it.hasMoreElements()){
-			IJugador jug=it.nextElement();
-			if(j.contains(jug)){
+	public void ganadores(List<IJugador> j) {
+		Enumeration<IJugador> it = getJugadores();
+
+		while (it.hasMoreElements()) {
+			IJugador jug = it.nextElement();
+			if (j.contains(jug)) {
 				gana((Jugador) jug);
-			}else{
-				pierde((Jugador)jug);
+			} else {
+				pierde((Jugador) jug);
 			}
 		}
-		if(j.size()==0){
+		if (j.size() == 0) {
 			return;
-		}else if(j.size()==1){
-			sendAll(Lang.get("fin_winnerPlayer").replace("%Winner%", j.get(0).toString()));
+		} else if (j.size() == 1) {
+			sendAll(Lang.get("fin_winnerPlayer").replace("%Winner%",
+					j.get(0).toString()));
 
-		}else {
-			Iterator<IJugador> ite=j.iterator();
-			IJugador jug=ite.next();
-			String s=jug.getPlayer().getName();
+		} else {
+			Iterator<IJugador> ite = j.iterator();
+			IJugador jug = ite.next();
+			String s = jug.getPlayer().getName();
 
-			while(ite.hasNext()){
-				jug=ite.next();
-				s+=", "+jug.getPlayer().getName();
+			while (ite.hasNext()) {
+				jug = ite.next();
+				s += ", " + jug.getPlayer().getName();
 				gana((Jugador) jug);
 			}
 			sendAll(Lang.get("fin_winnerPlayer").replace("%Winner%", s));
 		}
 
-		
 	}
+
 	public void clearJugadores() {
 		Enumeration<IJugador> j = jugadores.elements();
 		while (j.hasMoreElements()) {
@@ -203,14 +197,14 @@ public abstract class PartidaTCT extends Partida{
 
 	@Override
 	public void forzarFin() {
-		Enumeration<IJugador> it=getJugadores();
-		List<IJugador> list=new LinkedList<IJugador>();
-		int p=0;
-		while(it.hasMoreElements()){
-			IJugador j=it.nextElement();
-			if(j.getPuntuacion()==p){
+		Enumeration<IJugador> it = getJugadores();
+		List<IJugador> list = new LinkedList<IJugador>();
+		int p = 0;
+		while (it.hasMoreElements()) {
+			IJugador j = it.nextElement();
+			if (j.getPuntuacion() == p) {
 				list.add(j);
-			}else if(j.getPuntuacion()>p){
+			} else if (j.getPuntuacion() > p) {
 				list.clear();
 				list.add(j);
 			}
@@ -218,15 +212,16 @@ public abstract class PartidaTCT extends Partida{
 		ganadores(list);
 		this.setEstado(Estado.Finalizada);
 	}
+
 	@Override
-	public void cargaConf(ConfigurationSection section){
+	public void cargaConf(ConfigurationSection section) {
 		super.cargaConf(section);
-		int max = Auxiliar.getNatural(section.getString("Puntuacion_Maxima"), -1);
+		int max = Auxiliar.getNatural(section.getString("Puntuacion_Maxima"),
+				-1);
 		if (max != -1) {
-			pMax=max;
+			pMax = max;
 		}
 		section.set("Puntuacion_Maxima", pMax);
 	}
-	
 
 }

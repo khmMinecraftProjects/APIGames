@@ -133,5 +133,7 @@ public interface IPartida extends IEnabler {
 
 	public void sendAsToTeam(Jugador j, String message);
 
+	public void Equipar(Jugador j);
+
 
 }

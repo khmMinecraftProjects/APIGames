@@ -3,44 +3,50 @@ package me.khmdev.APIGames.Books.Ventajas;
 import me.khmdev.APIBase.Auxiliar.Auxiliar;
 import me.khmdev.APIGames.Auxiliar.Jugador;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class VentajaInitItem extends Ventaja{
-	private ItemStack ItemOri;
+	protected ItemStack ItemOri;
 	public VentajaInitItem(ItemStack it,
 			String nam, String description,double p) {
 		super(nam, description,p);
 	}
 	public VentajaInitItem(ItemStack it,double p) {
-		super(Auxiliar.getOriginalName(it.getType().name())
+		super(Auxiliar.getOriginalName(
+				it.getItemMeta().getDisplayName()!=null?
+						it.getItemMeta().getDisplayName():
+							it.getType().name())
 				, "Obten el item al iniciar la partida",p);
-		ItemOri=it.clone();
-		item=it;
+		ItemOri=it;
+		item=it.clone();
 	}
-	@SuppressWarnings("deprecation")
+
 	@Override
 	protected void equip(Jugador j) {
-		j.getPlayer().getInventory().addItem(ItemOri);
-		j.getPlayer().updateInventory();
+		//j.getPlayer().getInventory().addItem(ItemOri);
+		//j.getPlayer().updateInventory();
+		eq(j.getPlayer());
+	}
+	@SuppressWarnings("deprecation")
+	protected void eq(Player pl){
+		System.out.println("aaa");
+		pl.getInventory().remove(ItemOri);
+		pl.getInventory().addItem(ItemOri);
+		pl.updateInventory();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void spawn(Jugador j) {
+		eq(j.getPlayer());
 
-		j.getPlayer().getInventory().addItem(ItemOri);
-
-		j.getPlayer().updateInventory();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void respawn(Jugador j,PlayerRespawnEvent event) {
-
-		event.getPlayer().getInventory().addItem(ItemOri);
-		event.getPlayer().updateInventory();
+		eq(j.getPlayer());System.out.println("respawn");
 
 	}
 

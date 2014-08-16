@@ -1,5 +1,8 @@
 package me.khmdev.APIGames.Auxiliar;
 
+import org.bukkit.Effect;
+import org.bukkit.EntityEffect;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.event.block.Action;
@@ -54,6 +57,7 @@ public class CustomSignGames extends CustomSign {
 						if (par != null && par.JugadorEsta(p.getName())) {
 							event.getPlayer().sendMessage(
 									"Ya esta en la partida " + act.asString());
+							
 							return;
 						}else{
 							API.removeMetadata(event.getPlayer(), "Jugando");
@@ -64,6 +68,8 @@ public class CustomSignGames extends CustomSign {
 						event.getPlayer().sendMessage(
 								"Entrando a partida " + p.getName());
 						p.nuevoJugador(event.getPlayer());
+						event.getPlayer().playEffect(event.getPlayer().getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 30);
+						event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.LEVEL_UP, 10, 10);
 					} else {
 						event.getPlayer().sendMessage(
 								"Ya esta en la partida " + p.getName());
@@ -74,6 +80,7 @@ public class CustomSignGames extends CustomSign {
 					event.getPlayer().sendMessage(
 							"No se ha podido entrar a la partida "
 									+ p.getName());
+					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ANVIL_LAND, 1, 1);
 
 				}
 			} /*else {
