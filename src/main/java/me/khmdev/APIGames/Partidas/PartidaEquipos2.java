@@ -262,16 +262,15 @@ public abstract class PartidaEquipos2 extends Partida {
 	public boolean SpawnCompleto() {
 		return getRB().Completo()
 				&& getRB().Completo()
-				&& ((segura == null) || (segura.getMap() != null && segura
-						.Completo()));
+				&& super.SpawnCompleto();
 	}
 
 	public boolean SpawnFuncional() {
-		return !(getRB().rVacio() && getRA().rVacio() && ((segura == null) || (segura
-				.getMap() != null && segura.rVacio())));
+		return !(getRB().rVacio() && getRA().rVacio()) && super.SpawnFuncional();
 	}
 
 	public void creaSpawners() {
+		super.creaSpawners();
 		long ini = System.currentTimeMillis();
 		while (!(getRA().Completo())
 				&& (ini + timeO) - System.currentTimeMillis() > 0) {
@@ -285,15 +284,6 @@ public abstract class PartidaEquipos2 extends Partida {
 				&& (ini + timeO) - System.currentTimeMillis() > 0) {
 			getRB().getFreeZone();
 
-		}
-		if (segura != null && segura.getMap() != null) {
-			ini = System.currentTimeMillis();
-			boolean b = false;
-			while (!(segura.Completo()) && !b
-					&& (ini + timeO) - System.currentTimeMillis() > 0) {
-				b = segura.getFreeZone();
-
-			}
 		}
 	}
 

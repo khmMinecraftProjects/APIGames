@@ -139,7 +139,7 @@ public class Control extends BukkitRunnable implements IControl {
 		if (run != null) {
 			run.finalizar();
 		}
-		partida.finalizar();
+		partida.Gofinalizar();
 		Bukkit.getScheduler().cancelTask(id);
 
 	}

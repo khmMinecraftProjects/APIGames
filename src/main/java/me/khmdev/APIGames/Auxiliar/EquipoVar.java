@@ -6,16 +6,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 
 public class EquipoVar {
-	public final String chat;
+	public final String name;
+	public final ChatColor chat;
 	public final DyeColor dye;
 	public final Equipo equipo;
 
-
-	public final String name;
-	
-	public EquipoVar(String nam,String cht, DyeColor color,Equipo equip){
+	public EquipoVar(String nam,ChatColor cht, DyeColor color,Equipo equip){
 		dye=color;
-		chat=ChatColor.translateAlternateColorCodes('&',cht);
+		chat=cht;
 		name=nam;
 		equipo=equip;
 	}

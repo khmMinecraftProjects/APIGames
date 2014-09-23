@@ -29,6 +29,10 @@ public class NewCSGames extends NewsCustomSign {
 		String s = event.getLine(0);
 
 		if (Auxiliar.getSeparate(s, 0, ' ').equals(game.getName())) {
+			if(!event.getPlayer().hasPermission("apig.command")){
+				event.setCancelled(true);
+				return false;
+			}
 			String Spartida = Auxiliar.getSeparate(s, 1, ' ');
 			IPartida partida = null;
 			partida = game.getPartida(Spartida);

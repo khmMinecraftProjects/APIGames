@@ -92,7 +92,7 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
 				<configuration>
-					<outputDirectory>${BUKKIT}/plugins</outputDirectory>
+					<outputDirectory>${BUKKIT}/plugins/update</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>

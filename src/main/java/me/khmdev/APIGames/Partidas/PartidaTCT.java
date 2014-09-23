@@ -36,7 +36,7 @@ public abstract class PartidaTCT extends Partida {
 	protected void setEquipo(Jugador j) {
 		j.setEquipo(Equipo.Ninguno);
 	}
-
+/*
 	public String Datos() {
 		String s = "";
 		s += ok(mapa) + "Mapa: " + dat(mapa) + "\n";
@@ -44,7 +44,7 @@ public abstract class PartidaTCT extends Partida {
 		s += ok(sign) + "Sign: " + dat(sign) + "\n";
 		return s;
 	}
-
+*/
 	public boolean Funcional() {
 		return !(mapa == null);
 	}
@@ -77,19 +77,21 @@ public abstract class PartidaTCT extends Partida {
 	 */
 
 	int numS = 100;
-	boolean fin = false;
+	boolean fin=false;
 
 	public boolean SpawnCompleto() {
-		return ReSp.size() > numS || fin;
+		return fin&&super.SpawnCompleto();
 	}
 
 	public boolean SpawnFuncional() {
-		return ReSp.size() != 0;
+		return ReSp.size() != 0 && super.SpawnFuncional();
 	}
 
 	public void creaSpawners() {
+		super.creaSpawners();
+
 		long ini = System.currentTimeMillis();
-		while (!(SpawnCompleto())
+		while (!(SpawnCompleto())&&!fin
 				&& (ini + timeO) - System.currentTimeMillis() > 0) {
 			fin = getFreeZone();
 
@@ -142,7 +144,7 @@ public abstract class PartidaTCT extends Partida {
 			sendAll(Lang.get("fin_winnerPlayer").replace("%Winner%",
 					j.toString()));
 			gana(j);
-			finalizar();
+			Gofinalizar();
 
 		}
 	}

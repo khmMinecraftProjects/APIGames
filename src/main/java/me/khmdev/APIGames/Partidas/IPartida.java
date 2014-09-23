@@ -49,7 +49,7 @@ public interface IPartida extends IEnabler {
 	
 	public void actualizarSign();
 
-	public void finalizar();
+	public void Gofinalizar();
 
 	public void Cerrar();
 
@@ -73,9 +73,9 @@ public interface IPartida extends IEnabler {
 
 	public void JugadorEntra(Jugador s);
 
-	public void JugadorAbandona(Jugador j);
+	public void JugadorGoAbandona(Jugador j);
 
-	public boolean nuevoJugador(Player p);
+	public boolean nuevoGoJugador(Player p);
 
 	public Sign getSign();
 
@@ -135,5 +135,7 @@ public interface IPartida extends IEnabler {
 
 	public void Equipar(Jugador j);
 
+	public void JugadorGoRendirse(Jugador j);
 
+	public void finalizar();
 }

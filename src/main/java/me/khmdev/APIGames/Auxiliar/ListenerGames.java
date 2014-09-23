@@ -31,10 +31,15 @@ public abstract class ListenerGames implements Listener {
 
 		Jugador j = game.getJugador(event.getPlayer().getName());
 		if (j == null || j.getPartida().getEstado() != Estado.EnCurso) {
-			event.getRecipients().removeAll(game.getPlayers());
+			for (IJugador jj : game.getJugadores()) {
+				if (jj.getPartida().getEstado() == Estado.EnCurso) {
+					event.getRecipients().remove(jj);
+				}
+			}
 			return;
 		} else {
 			event.setCancelled(true);
+
 			if (event.getMessage().startsWith("all")) {
 				j.getPartida().sendAsToAll(j,
 						event.getMessage().replaceFirst("all ", ""));
@@ -88,7 +93,7 @@ public abstract class ListenerGames implements Listener {
 
 		Jugador j;
 		if ((j = game.getJugador(event.getPlayer().getName())) != null) {
-			j.getPartida().JugadorAbandona(j);
+			j.getPartida().JugadorGoAbandona(j);
 			j.getPartida().pierde(j);
 		}
 	}

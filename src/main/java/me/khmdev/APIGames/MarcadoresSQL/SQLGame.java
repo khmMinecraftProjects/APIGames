@@ -2,194 +2,159 @@ package me.khmdev.APIGames.MarcadoresSQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import me.khmdev.APIBase.API;
-import me.khmdev.APIBase.Almacenes.AlmacenSQL;
-import me.khmdev.APIBase.Almacenes.FieldSQL;
-import me.khmdev.APIBase.Almacenes.varSQL;
-import me.khmdev.APIBase.Almacenes.ConstantesAlmacen.typeVar;
+import me.khmdev.APIBase.Almacenes.sql.AlmacenSQL;
+import me.khmdev.APIBase.Almacenes.sql.Consulta;
+import me.khmdev.APIBase.Almacenes.sql.FieldSQL;
+import me.khmdev.APIBase.Almacenes.sql.FieldSQLChange;
+import me.khmdev.APIGames.Auxiliar.Jugador;
 import me.khmdev.APIGames.Games.IGame;
 
 public class SQLGame {
 	private AlmacenSQL sql;
 	private IGame game;
-	public SQLGame(IGame g){
-		sql=API.getInstance().getSql();
-		game=g;
-		createGame();
+
+	public SQLGame(IGame g) {
+		sql = API.getInstance().getSql();
+		game = g;
 		addGame();
 	}
-	
-	private void addGame(){
-		if(!sql.existTable("juegos")){
-			sql.createTab("juegos",
-					new varSQL("id", typeVar.varchar,20),
-					new varSQL("Alias", typeVar.varchar,50));
-			sql.setUnique("juegos","id");
-		}
-		if(!sql.existId("juegos", "id", game.getName())){
-		sql.createField("juegos", new FieldSQL("id", game.getName()),
-				new FieldSQL("Alias", game.getAlias()));
+
+	private void addGame() {
+
+		if (!sql.existId(SQLConstant.tablaJuegos, new FieldSQL(
+				SQLConstant.celdaJuegoID, game.getName()))) {
+			sql.createField(SQLConstant.tablaJuegos, new FieldSQL(
+					SQLConstant.celdaJuegoID, game.getName()), new FieldSQL(
+					SQLConstant.celdaJuegoAlias, game.getAlias()));
 		}
 	}
-	
-	public boolean createGame(){
-		if(sql.existTable(game.getName())){
-			return false;
+
+	private boolean addToVar(String pl, int i, String n) {
+		if (!sql.existId(SQLConstant.tablaMarcadores, new FieldSQL(
+				SQLConstant.celdaUsuarioID, pl), new FieldSQL(
+				SQLConstant.celdaUsuarioJuego, game.getName()))) {
+
+			crearUser(pl, new FieldSQL(n, i));
 		}
 
-		sql.createTab(game.getName(),
-				new varSQL("User", typeVar.varchar,50),
-				new varSQL("Ganadas", typeVar.inteteger),
-				new varSQL("Perdidas", typeVar.inteteger),
-				new varSQL("Puntos", typeVar.inteteger),
-				new varSQL("Kills", typeVar.inteteger),
-				new varSQL("Deaths", typeVar.inteteger));
-		
-		sql.setUnique(game.getName(),"User");
-		return true;
-	}
-	
-	public boolean perdida(String pl,int i){
-		if(!sql.existId(game.getName(), "User", pl)){
-			crearUser(pl);
-		}
-		ResultSet res = sql.getValue(game.getName(), "User", pl);
-
-
+		Consulta c = sql.getValue(SQLConstant.tablaMarcadores, new FieldSQL(
+				SQLConstant.celdaUsuarioID, pl), new FieldSQL(
+				SQLConstant.celdaUsuarioJuego, game.getName()));
+		if(c==null){return false;}
 		try {
-			int num=-1;
-			while (res!=null&&res.next()) {
-				if(res.getString("User").equalsIgnoreCase(pl)){
+			ResultSet res=c.getR();
 
-				num=res.getInt("Perdidas");}
+			int num = -1;
+
+			while (res != null && res.next()) {
+
+				if (res.getString(SQLConstant.celdaUsuarioID).equalsIgnoreCase(
+						pl)) {
+
+					num = res.getInt(n);
+				}
 			}
 
-			sql.changeData(game.getName(),
-					"User", "'"+pl+"'", "Perdidas", num+i+"");
+			sql.changeData(game.getName(), new FieldSQLChange(n, num + i + "",
+					new FieldSQL(SQLConstant.celdaUsuarioID, "'" + pl + "'")));
 
 			return true;
-		}catch(SQLException e){
+		} catch (SQLException e) {
 			return false;
+		}finally{
+			c.close();
 		}
 	}
-	public boolean punto(String pl,int i){
-		if(!sql.existId(game.getName(), "User", pl)){
 
-			crearUser(pl);
-		}
-		
-		ResultSet res = sql.getValue(game.getName(), "User", pl);
-
-
-		try {
-			int num=-1;
-			
-			while (res!=null&&res.next()) {
-
-				if(res.getString("User").equalsIgnoreCase(pl)){
-
-				num=res.getInt("Puntos");}
-			}
-
-			sql.changeData(game.getName(),
-					"User", "'"+pl+"'", "Puntos", num+i+"");
-			return true;
-		}catch(SQLException e){
-			return false;
-		}
+	public boolean punto(String pl, int i) {
+		return addToVar(pl, i, SQLConstant.celdaUsuarioPuntos);
 	}
-	public boolean kill(String pl,int i){
-		if(!sql.existId(game.getName(), "User", pl)){
 
-			crearUser(pl);
-		}
-		
-		ResultSet res = sql.getValue(game.getName(), "User", pl);
-
-
-		try {
-			int num=-1;
-			
-			while (res!=null&&res.next()) {
-
-				if(res.getString("User").equalsIgnoreCase(pl)){
-
-				num=res.getInt("Kills");}
-			}
-
-			sql.changeData(game.getName(),
-					"User", "'"+pl+"'", "Kills", num+i+"");
-			return true;
-		}catch(SQLException e){
-			return false;
-		}
+	public boolean kill(String pl, int i) {
+		return addToVar(pl, i, SQLConstant.celdaUsuarioKills);
 	}
-	public boolean deaths(String pl,int i){
-		if(!sql.existId(game.getName(), "User", pl)){
 
-			crearUser(pl);
-		}
-		
-		ResultSet res = sql.getValue(game.getName(), "User", pl);
-
-
-		try {
-			int num=-1;
-			
-			while (res!=null&&res.next()) {
-
-				if(res.getString("User").equalsIgnoreCase(pl)){
-
-				num=res.getInt("Deaths");}
-			}
-
-			sql.changeData(game.getName(),
-					"User", "'"+pl+"'", "Deaths", num+i+"");
-			return true;
-		}catch(SQLException e){
-			return false;
-		}
+	public boolean deaths(String pl, int i) {
+		return addToVar(pl, i, SQLConstant.celdaUsuarioDeaths);
 	}
-	
-	public boolean ganada(String pl,int i){
-		
-		if(!sql.existId(game.getName(), "User", pl)){
 
-			crearUser(pl);
-		}
-		
-		ResultSet res = sql.getValue(game.getName(), "User", pl);
-
-
-		try {
-			int num=-1;
-			
-			while (res!=null&&res.next()) {
-
-				if(res.getString("User").equalsIgnoreCase(pl)){
-
-				num=res.getInt("Ganadas");}
-			}
-
-			sql.changeData(game.getName(),
-					"User", "'"+pl+"'", "Ganadas", num+i+"");
-			return true;
-		}catch(SQLException e){
-			return false;
-		}
+	public boolean ganada(String pl, int i) {
+		return addToVar(pl, i, SQLConstant.celdaUsuarioGanadas);
 	}
-	public void crearUser(String pl){
-		sql.createField(game.getName(), new FieldSQL("User", pl),
-				new FieldSQL("Ganadas", 0),new FieldSQL("Perdidas",0));
+
+	public boolean perdida(String pl, int i) {
+		return addToVar(pl, i, SQLConstant.celdaUsuarioPerdidas);
+	}
+
+	public void crearUser(String pl) {
+		sql.createField(SQLConstant.tablaMarcadores, new FieldSQL(
+				SQLConstant.celdaUsuarioID, pl), new FieldSQL(
+				SQLConstant.celdaUsuarioJuego, game.getName()));
+	}
+
+	public void crearUser(String pl, FieldSQL c) {
+		sql.createField(SQLConstant.tablaMarcadores, new FieldSQL(
+				SQLConstant.celdaUsuarioID, pl), new FieldSQL(
+				SQLConstant.celdaUsuarioJuego, game.getName()), c);
 	}
 
 	public void resultadoPartida(String pl, int ganador) {
-		if(ganador==1){
+		if (ganador == 1) {
 			ganada(pl, 1);
-		}else if(ganador==0){
+		} else if (ganador == 0) {
 			perdida(pl, 1);
 		}
+	}
+
+	public void actualizar(Jugador j) {
+		String pl = j.getPlayer().getName(), g = game.getName();
+
+		int gan = j.isGanador() == 1 ? 1 : 0, per = j.isGanador() != 1 ? 1 : 0, kil = j
+				.getKills(), dea = j.getDeaths(), pun = j.getPuntuacion();
+		Consulta c = sql.getValue(SQLConstant.tablaMarcadores, new FieldSQL(
+				SQLConstant.celdaUsuarioID, pl), new FieldSQL(
+				SQLConstant.celdaUsuarioJuego, g));
+		if(c==null){return;}
+		
+		try {
+			ResultSet r=c.getR();
+
+			if (r.next()) {
+				gan += r.getInt(SQLConstant.celdaUsuarioGanadas);
+				per += r.getInt(SQLConstant.celdaUsuarioPerdidas);
+				kil += r.getInt(SQLConstant.celdaUsuarioKills);
+				dea += r.getInt(SQLConstant.celdaUsuarioDeaths);
+				pun += r.getInt(SQLConstant.celdaUsuarioPuntos);
+			}
+			sql.changeData(
+					SQLConstant.tablaMarcadores,
+					new FieldSQLChange(Arrays.asList(new FieldSQL(
+							SQLConstant.celdaUsuarioID, pl), new FieldSQL(
+							SQLConstant.celdaUsuarioJuego, game.getName()),
+							new FieldSQL(SQLConstant.celdaUsuarioGanadas, gan),
+							new FieldSQL(SQLConstant.celdaUsuarioPerdidas, per),
+							new FieldSQL(SQLConstant.celdaUsuarioKills, kil),
+							new FieldSQL(SQLConstant.celdaUsuarioDeaths, dea),
+							new FieldSQL(SQLConstant.celdaUsuarioPuntos, pun)),
+							new FieldSQL(SQLConstant.celdaUsuarioID, pl),
+							new FieldSQL(SQLConstant.celdaUsuarioJuego, game
+									.getName())));
+		} catch (Exception e) {
+			sql.createField(SQLConstant.tablaMarcadores, new FieldSQL(
+					SQLConstant.celdaUsuarioID, pl), new FieldSQL(
+					SQLConstant.celdaUsuarioJuego, game.getName()),
+					new FieldSQL(SQLConstant.celdaUsuarioGanadas, gan),
+					new FieldSQL(SQLConstant.celdaUsuarioPerdidas, per),
+					new FieldSQL(SQLConstant.celdaUsuarioKills, kil),
+					new FieldSQL(SQLConstant.celdaUsuarioDeaths, dea),
+					new FieldSQL(SQLConstant.celdaUsuarioPuntos, pun));
+		}finally{
+			c.close();
+		}
+		
 	}
 
 }

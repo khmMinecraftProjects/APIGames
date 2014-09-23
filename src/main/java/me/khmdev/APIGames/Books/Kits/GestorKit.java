@@ -13,6 +13,7 @@ import me.khmdev.APIAuxiliar.Players.AuxPlayer;
 public class GestorKit {
 	private CustomInventory inventory;
 	private String game;
+	private ItemStack standar=new ItemStack(Material.BEACON);
 	public GestorKit(String gam,Inventory volver) {
 		game=gam;
 		inventory=new CustomInventory("Kits "+gam);
@@ -30,7 +31,7 @@ public class GestorKit {
 		
 		InventoryShowKit show=new InventoryShowKit(name,
 				game,name, inv,arm,inventory.getInventory());
-		inventory.addItem(new ItemOpenInventory(new ItemStack(Material.BEACON)
+		inventory.addItem(new ItemOpenInventory(standar
 						, show.getInventory()));
 		CItems.addInventorys(show);
 

@@ -11,7 +11,7 @@ import me.khmdev.APIAuxiliar.Inventory.CustomInventorys.CItems;
 import me.khmdev.APIBase.API;
 import me.khmdev.APIBase.Almacenes.Almacen;
 import me.khmdev.APIBase.Almacenes.Datos;
-import me.khmdev.APIBase.Almacenes.LocAlmacen;
+import me.khmdev.APIBase.Almacenes.local.LocAlmacen;
 import me.khmdev.APIGames.APIG;
 import me.khmdev.APIGames.Auxiliar.ConfigGames;
 import me.khmdev.APIGames.Auxiliar.CustomSignGames;
@@ -30,7 +30,6 @@ import me.khmdev.APIGames.Partidas.IPartida;
 import me.khmdev.APIMaps.APIM;
 import me.khmdev.APIMaps.Auxiliar.Map;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -334,7 +333,7 @@ public abstract class Game implements IGame, Datos {
 			if (sender.getName() == "CONSOLE") {
 				return true;
 			}
-			Player pl = Bukkit.getServer().getPlayer(sender.getName());
+			Player pl = sender instanceof Player?(Player)sender:null;
 			Location a = LocAlmacen.cargar(pl, "LocA");
 			
 			if (a == null) {
@@ -355,8 +354,10 @@ public abstract class Game implements IGame, Datos {
 		}
 		if (args[2].equals("in")) {
 			if (partida.getEstado() == Estado.EsperandoJugadores) {
+				Player pl = sender instanceof Player?(Player)sender:null;
+				if(pl==null){return true;}
 				if (!partida.JugadorEsta(sender.getName())) {
-					partida.nuevoJugador(Bukkit.getPlayer(sender.getName()));
+					partida.nuevoGoJugador(pl);
 					sender.sendMessage("Entra en partida " + partida.getName());
 				} else {
 					sender.sendMessage("Ya esta en la partida "
@@ -442,6 +443,16 @@ public abstract class Game implements IGame, Datos {
 	}
 	public void setTime(long tim){
 		time=tim;
+	}
+	public List<IJugador> getJugadores(){
+		List<IJugador> players=new LinkedList<>();
+		for (IPartida p : partidas.values()) {
+			Enumeration<IJugador> l=p.getJugadores();
+			while (l.hasMoreElements()) {
+				players.add(l.nextElement());
+			}
+		}
+		return players;
 	}
 
 	public List<Player> getPlayers(){

@@ -18,7 +18,7 @@ import me.khmdev.APIMaps.Auxiliar.Map;
 import me.khmdev.APIMaps.Auxiliar.Zona;
 
 public class ZonaSegura extends Zona {
-	private boolean completo, regenerando;
+	private boolean completo=false, regenerando;
 	protected List<Location> R;
 	protected Location sign;
 	protected Location ultima;
@@ -76,7 +76,7 @@ public class ZonaSegura extends Zona {
 	}
 
 	public Location SpawnZone() {
-		return R.get((int) (Math.random() * R.size()));
+		return R.size()==0?null:R.get((int) (Math.random() * R.size()));
 	}
 
 	public boolean rVacio() {
@@ -113,11 +113,10 @@ public class ZonaSegura extends Zona {
 		for (int x = (int) l.getX(); x < maxX(); x++) {
 			for (int y = (int) l.getY(); y < maxY(); y++) {
 				for (int z = (int) l.getZ(); z < maxZ(); z++) {
-					ultima = new Location(w, x, y, z);
 					signal(x, y, z, w);
 					if (AuxPlayer.isPossibleSpawn(w, x, y, z)) {
-						R.add(new Location(w, x, y, z));
-
+						ultima = new Location(w, x, y, z);
+						R.add(ultima);
 						return false;
 					}
 				}
@@ -125,8 +124,9 @@ public class ZonaSegura extends Zona {
 			}
 			l.setY(minY());
 		}
+		ultima = new Location(w, l.getX(), l.getY(), l.getZ());
 		completo = true;
-		return true;
+		return completo;
 	}
 
 	private void signal(int x, int y, int z, World w) {

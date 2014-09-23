@@ -22,11 +22,7 @@ public class MarcadoresSQL extends BukkitRunnable{
 		Jugador j=null;
 		if((j=actualizar.poll())!=null){
 			SQLGame sql=j.getPartida().getGame().getSql();
-			String pl=j.getPlayer().getName();
-			sql.resultadoPartida(pl,j.isGanador());
-			sql.punto(pl, j.getPuntuacion());
-			sql.kill(pl, j.getKills());
-			sql.deaths(pl, j.getDeaths());
+			sql.actualizar(j);
 		}
 	}
 	public void setId(int idd) {

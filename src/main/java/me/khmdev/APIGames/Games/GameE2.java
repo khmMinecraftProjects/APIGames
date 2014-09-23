@@ -1,7 +1,7 @@
 package me.khmdev.APIGames.Games;
 
 import me.khmdev.APIBase.API;
-import me.khmdev.APIBase.Almacenes.LocAlmacen;
+import me.khmdev.APIBase.Almacenes.local.LocAlmacen;
 import me.khmdev.APIGames.Auxiliar.Respawn;
 import me.khmdev.APIGames.Auxiliar.ConstantesGames.Equipo;
 import me.khmdev.APIGames.Books.BookE2;
@@ -9,7 +9,6 @@ import me.khmdev.APIGames.Books.IBook;
 import me.khmdev.APIGames.Partidas.PartidaEquipos2;
 
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -49,7 +48,7 @@ public abstract class GameE2 extends Game {
 				if (sender.getName() == "CONSOLE") {
 					return true;
 				}
-				Player pl = Bukkit.getServer().getPlayer(sender.getName());
+				Player pl = sender instanceof Player?(Player)sender:null;
 				Location a = LocAlmacen.cargar(pl, "LocA");
 
 				if (a == null || args.length < 4) {
@@ -70,7 +69,7 @@ public abstract class GameE2 extends Game {
 				if (sender.getName() == "CONSOLE") {
 					return true;
 				}
-				Player pl = Bukkit.getServer().getPlayer(sender.getName());
+				Player pl = sender instanceof Player?(Player)sender:null;
 				Location a = LocAlmacen.cargar(pl, "LocA");
 
 				if (a == null || args.length < 4) {

@@ -32,7 +32,6 @@ public class VentajaInitItem extends Ventaja{
 	}
 	@SuppressWarnings("deprecation")
 	protected void eq(Player pl){
-		System.out.println("aaa");
 		pl.getInventory().remove(ItemOri);
 		pl.getInventory().addItem(ItemOri);
 		pl.updateInventory();
@@ -46,8 +45,7 @@ public class VentajaInitItem extends Ventaja{
 
 	@Override
 	public void respawn(Jugador j,PlayerRespawnEvent event) {
-		eq(j.getPlayer());System.out.println("respawn");
-
+		eq(j.getPlayer());
 	}
 
 	@Override

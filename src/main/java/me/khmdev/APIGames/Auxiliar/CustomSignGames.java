@@ -1,7 +1,6 @@
 package me.khmdev.APIGames.Auxiliar;
 
 import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -11,6 +10,7 @@ import org.bukkit.metadata.MetadataValue;
 
 import me.khmdev.APIAuxiliar.Inventory.CustomInventorys.CustomSign;
 import me.khmdev.APIBase.API;
+import me.khmdev.APIGames.APIG;
 import me.khmdev.APIGames.Auxiliar.ConstantesGames.Estado;
 import me.khmdev.APIGames.Games.IGame;
 import me.khmdev.APIGames.Partidas.IPartida;
@@ -57,68 +57,75 @@ public class CustomSignGames extends CustomSign {
 						if (par != null && par.JugadorEsta(p.getName())) {
 							event.getPlayer().sendMessage(
 									"Ya esta en la partida " + act.asString());
-							
+
 							return;
-						}else{
+						} else {
 							API.removeMetadata(event.getPlayer(), "Jugando");
 						}
 					}
 
 					if (!p.JugadorEsta(event.getPlayer().getName())) {
+						if(APIG.getInstance().getJugador(event.getPlayer())!=null){
+							event.getPlayer().sendMessage(
+									"Ya esta en otra partida");
+							event.getPlayer().playSound(
+									event.getPlayer().getLocation(), Sound.ANVIL_LAND,
+									1, 1);
+							return;
+						}
 						event.getPlayer().sendMessage(
 								"Entrando a partida " + p.getName());
-						event.getPlayer().playEffect(event.getPlayer().getEyeLocation(), Effect.MOBSPAWNER_FLAMES, 30);
-						event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.LEVEL_UP, 10, 10);
-						p.nuevoJugador(event.getPlayer());
+						event.getPlayer().getWorld().playEffect(
+								event.getPlayer().getEyeLocation(),
+								Effect.MOBSPAWNER_FLAMES, 30);
+						event.getPlayer().playSound(
+								event.getPlayer().getLocation(),
+								Sound.LEVEL_UP, 10, 10);
+
+						p.nuevoGoJugador(event.getPlayer());
 					} else {
 						event.getPlayer().sendMessage(
 								"Ya esta en la partida " + p.getName());
-
+						event.getPlayer().playSound(
+								event.getPlayer().getLocation(), Sound.ANVIL_LAND,
+								1, 1);
 					}
 				} else {
 
 					event.getPlayer().sendMessage(
 							"No se ha podido entrar a la partida "
 									+ p.getName());
-					event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ANVIL_LAND, 1, 1);
+					event.getPlayer().playSound(
+							event.getPlayer().getLocation(), Sound.ANVIL_LAND,
+							1, 1);
 
 				}
-			} /*else {
-				if (p.getEstado() == Estado.EsperandoJugadores) {
-					Jugador j = p.getJugador(event.getPlayer().getName());
-					if (j != null) {
-						if(!j.getPlayer().hasPermission("abandonar.command")){
-							j.getPlayer().sendMessage(ChatColor.RED+
-									"No tienes permisos suficientes");
-							return;
-						}
-						String ss=j.getPlayer().getName();
-						if(ResetAbandonar.canLeave(ss)){
-							p.JugadorAbandona(j);
-							j.abandona();
-							event.getPlayer().sendMessage(
-								"Saliendo de la partida " + p.getName());
-							ResetAbandonar.leave(ss);
-							
-						} else {
-
-							event.getPlayer().sendMessage(
-									"No puedes abandonar hasta dentro de "
-											+ ResetAbandonar.timeString(ss));
-						}
-					} else {
-						event.getPlayer().sendMessage(
-								"No esta en la partida " + p.getName());
-
-					}
-				} else {
-					event.getPlayer().sendMessage(
-							"No se ha podido salir de la la partida "
-									+ p.getName());
-
-				}
-
-			}*/
+			} /*
+			 * else { if (p.getEstado() == Estado.EsperandoJugadores) { Jugador
+			 * j = p.getJugador(event.getPlayer().getName()); if (j != null) {
+			 * if(!j.getPlayer().hasPermission("abandonar.command")){
+			 * j.getPlayer().sendMessage(ChatColor.RED+
+			 * "No tienes permisos suficientes"); return; } String
+			 * ss=j.getPlayer().getName(); if(ResetAbandonar.canLeave(ss)){
+			 * p.JugadorAbandona(j); j.abandona();
+			 * event.getPlayer().sendMessage( "Saliendo de la partida " +
+			 * p.getName()); ResetAbandonar.leave(ss);
+			 * 
+			 * } else {
+			 * 
+			 * event.getPlayer().sendMessage(
+			 * "No puedes abandonar hasta dentro de " +
+			 * ResetAbandonar.timeString(ss)); } } else {
+			 * event.getPlayer().sendMessage( "No esta en la partida " +
+			 * p.getName());
+			 * 
+			 * } } else { event.getPlayer().sendMessage(
+			 * "No se ha podido salir de la la partida " + p.getName());
+			 * 
+			 * }
+			 * 
+			 * }
+			 */
 		}
 	}
 

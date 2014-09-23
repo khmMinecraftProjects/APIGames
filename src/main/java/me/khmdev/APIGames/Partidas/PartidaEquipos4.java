@@ -335,17 +335,12 @@ public abstract class PartidaEquipos4 extends PartidaEquipos2 {
 	}
 	
 	public boolean SpawnCompleto() {
-		return getRB().Completo() && getRB().Completo()
-				&& rC.Completo() && rD.Completo()
-				&& ((segura == null) || 
-						(segura.getMap()!=null&&segura.Completo()));
+		return rC.Completo() && rD.Completo()
+				&& super.SpawnCompleto();
 	}
 
 	public boolean SpawnFuncional() {
-		return !(getRB().rVacio() && getRA().rVacio() && 
-				rC.rVacio() && rD.rVacio() && 
-				((segura == null) || (segura.getMap()!=null&&segura
-				.rVacio())));
+		return !(rC.rVacio() && rD.rVacio()) && super.SpawnFuncional();
 	}
 
 	public void creaSpawners() {

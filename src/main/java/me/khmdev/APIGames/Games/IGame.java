@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import me.khmdev.APIGames.Auxiliar.IEnabler;
+import me.khmdev.APIGames.Auxiliar.IJugador;
 import me.khmdev.APIGames.Auxiliar.Jugador;
 import me.khmdev.APIGames.Books.IBook;
 import me.khmdev.APIGames.Books.Ventajas.GestorDeVentajas;
@@ -77,4 +78,6 @@ public interface IGame extends IEnabler{
 	public IBook initBook();
 	
 	public IBook getBook();
+
+	public List<IJugador> getJugadores();
 }

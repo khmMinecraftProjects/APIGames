@@ -19,6 +19,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -45,6 +46,11 @@ import me.khmdev.APIGames.Auxiliar.ConstantesGames.Equipo;
 import me.khmdev.APIGames.Auxiliar.ConstantesGames.Estado;
 import me.khmdev.APIGames.Books.Ventajas.GestorDeVentajas;
 import me.khmdev.APIGames.Games.IGame;
+import me.khmdev.APIGames.ListenAPIG.jugador.JugadorAbandonaEvent;
+import me.khmdev.APIGames.ListenAPIG.jugador.JugadorEntraEvent;
+import me.khmdev.APIGames.ListenAPIG.jugador.JugadorFinalizaEvent;
+import me.khmdev.APIGames.ListenAPIG.jugador.PreJugadorEntraEvent;
+import me.khmdev.APIGames.ListenAPIG.partida.PartidaFinalizaEvent;
 import me.khmdev.APIGames.MarcadoresSQL.ControlKills;
 import me.khmdev.APIGames.MarcadoresSQL.MarcadoresSQL;
 import me.khmdev.APIGames.Scores.BoardGames;
@@ -64,7 +70,8 @@ public abstract class Partida implements IPartida, Datos {
 	protected String name;
 	protected IControl control;
 	public API api;
-	protected long timeO = 500, time = -1;
+	protected final long timeO = 500;
+	protected long time = -1;
 	protected ZonaSegura segura;
 	protected BoardGames scores;
 	protected InventoryBase inventory = ConstantesAuxiliar.standar;
@@ -84,12 +91,12 @@ public abstract class Partida implements IPartida, Datos {
 	}
 
 	public void pierde(Jugador j) {
-		JugadorAbandona(j);
+		JugadorGoAbandona(j);
 		j.setGanador(0);
 	}
 
 	public void gana(Jugador j) {
-		JugadorAbandona(j);
+		JugadorGoAbandona(j);
 		j.setGanador(1);
 	}
 
@@ -267,7 +274,7 @@ public abstract class Partida implements IPartida, Datos {
 		while (j.hasMoreElements()) {
 
 			IJugador jj = j.nextElement();
-			JugadorAbandona((Jugador) jj);
+			JugadorGoAbandona((Jugador) jj);
 
 		}
 	}
@@ -305,7 +312,10 @@ public abstract class Partida implements IPartida, Datos {
 		Iterator<Entry<String, IJugador>> jj = jugadores.entrySet().iterator();
 		message = Lang
 				.get("send_selective_all")
-				.replace("%clr%", Variables.get(j.getEquipo()).chat)
+				.replace(
+						"%clr%",
+						Variables.get(j.getEquipo()) != null ? Variables.get(j
+								.getEquipo()).chat + "" : "")
 				.replace("%Player%", j.getPlayer().getName())
 				.replace("%msg%",
 						ChatColor.translateAlternateColorCodes('&', message));
@@ -319,7 +329,10 @@ public abstract class Partida implements IPartida, Datos {
 		Iterator<Entry<String, IJugador>> jj = jugadores.entrySet().iterator();
 		message = Lang
 				.get("send_selective_team")
-				.replace("%clr%", Variables.get(j.getEquipo()).chat)
+				.replace(
+						"%clr%",
+						Variables.get(j.getEquipo()) != null ? Variables.get(j
+								.getEquipo()).chat + "" : "")
 				.replace("%Player%", j.getPlayer().getName())
 				.replace("%msg%",
 						ChatColor.translateAlternateColorCodes('&', message));
@@ -334,13 +347,13 @@ public abstract class Partida implements IPartida, Datos {
 	public void sendEquipo(String s, Equipo e) {
 		String colr = Variables.ChatColorStandar;
 		if (e == Equipo.A) {
-			colr = Variables.A.chat;
+			colr = Variables.A.chat + "";
 		} else if (e == Equipo.B) {
-			colr = Variables.B.chat;
+			colr = Variables.B.chat + "";
 		} else if (e == Equipo.C) {
-			colr = Variables.C.chat;
+			colr = Variables.C.chat + "";
 		} else if (e == Equipo.D) {
-			colr = Variables.D.chat;
+			colr = Variables.D.chat + "";
 		}
 		Enumeration<IJugador> j = jugadores.elements();
 		while (j.hasMoreElements()) {
@@ -414,9 +427,10 @@ public abstract class Partida implements IPartida, Datos {
 
 	public void actualizarSign() {
 		if (sign != null) {
-			sign.setLine(0,
-					ChatColor.BLACK + "[" + ChatColor.DARK_AQUA + game.getName()
-							+ ChatColor.BLACK + "]");
+			sign.setLine(
+					0,
+					ChatColor.BLACK + "[" + ChatColor.DARK_AQUA
+							+ game.getAlias() + ChatColor.BLACK + "]");
 			sign.setLine(1, ChatColor.YELLOW + name);
 			if (getEstado() == Estado.EsperandoJugadores) {
 				sign.setLine(2, ChatColor.GREEN + "Esperando...");
@@ -441,6 +455,11 @@ public abstract class Partida implements IPartida, Datos {
 
 	public void ganador() {
 
+	}
+
+	public final void Gofinalizar() {
+		manager.callEvent(new PartidaFinalizaEvent(this));
+		finalizar();
 	}
 
 	public void finalizar() {
@@ -543,6 +562,19 @@ public abstract class Partida implements IPartida, Datos {
 		return coins;
 	}
 
+	public final void JugadorGoAbandona(Jugador j) {
+		manager.callEvent(new JugadorFinalizaEvent(j));
+		JugadorAbandona(j);
+	}
+
+	public final void JugadorGoRendirse(Jugador j) {
+		JugadorAbandonaEvent e = new JugadorAbandonaEvent(j);
+		manager.callEvent(new JugadorFinalizaEvent(j));
+		if (!e.isCancelled()) {
+			JugadorAbandona(j);
+		}
+	}
+
 	public void JugadorAbandona(Jugador j) {
 		BossBar.removeBarPlayer(j.getPlayer());
 
@@ -577,18 +609,43 @@ public abstract class Partida implements IPartida, Datos {
 
 	}
 
+	public boolean SpawnCompleto() {
+		return ((segura == null) || (segura.getMap() != null && segura
+				.Completo()));
+	}
+
+	public boolean SpawnFuncional() {
+		return ((segura == null) || (segura.getMap() != null && !segura
+				.rVacio()));
+	}
+
+	public void creaSpawners() {
+		long ini = System.currentTimeMillis();
+
+		if (segura != null && segura.getMap() != null && !segura.Completo()) {
+			ini = System.currentTimeMillis();
+			boolean b = false;
+
+			while (!(segura.Completo()) && !b
+					&& (ini + timeO) - System.currentTimeMillis() > 0) {
+				b = segura.getFreeZone();
+
+			}
+		}
+	}
+
 	protected void changeDisplay(IJugador j) {
 		j.setTag(NamesTags.getName(j.getPlayer()));
 		j.setTab(j.getPlayer().getPlayerListName());
 		String clr = "";
 		if (j.getEquipo() == Equipo.A) {
-			clr = Variables.A.chat;
+			clr = Variables.A.chat + "";
 		} else if (j.getEquipo() == Equipo.B) {
-			clr = Variables.B.chat;
+			clr = Variables.B.chat + "";
 		} else if (j.getEquipo() == Equipo.C) {
-			clr = Variables.C.chat;
+			clr = Variables.C.chat + "";
 		} else if (j.getEquipo() == Equipo.D) {
-			clr = Variables.D.chat;
+			clr = Variables.D.chat + "";
 		}
 		clr = clr + j.getPlayer().getName();
 		if (clr.length() > 16) {
@@ -616,7 +673,7 @@ public abstract class Partida implements IPartida, Datos {
 	public void guardar(Almacen nbt) {
 
 		ReInicio = false;
-		finalizar();
+		Gofinalizar();
 
 		if (mapa != null) {
 
@@ -694,6 +751,23 @@ public abstract class Partida implements IPartida, Datos {
 
 	public abstract Jugador newIJ();
 
+	PluginManager manager = Bukkit.getServer().getPluginManager();
+
+	public final boolean nuevoGoJugador(Player p) {
+		PreJugadorEntraEvent e = new PreJugadorEntraEvent(p, this);
+		manager.callEvent(e);
+
+		if (e.isCancelled()) {
+			return false;
+		}
+
+		if (!nuevoJugador(p)) {
+			return false;
+		}
+		manager.callEvent(new JugadorEntraEvent(getJugador(p.getName())));
+		return true;
+	}
+
 	public boolean nuevoJugador(Player p) {
 
 		if (Max <= jugadores.size()) {
@@ -705,6 +779,7 @@ public abstract class Partida implements IPartida, Datos {
 		jug.setPlayer(p);
 		jug.setPartida(this);
 		JugadorEntra(jug);
+
 		spawnZS(p);
 		addSecureItems(p);
 		return true;
@@ -713,7 +788,7 @@ public abstract class Partida implements IPartida, Datos {
 	protected abstract void setEquipo(Jugador j);
 
 	protected boolean spawnZS(Player p) {
-		if (segura != null && segura.getMap() != null) {
+		if (segura != null && segura.getMap() != null && !segura.rVacio()) {
 			p.teleport(segura.SpawnZone());
 			return true;
 		}

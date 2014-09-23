@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import me.khmdev.APIBase.Almacenes.ConstantesAlmacen.typeVar;
-import me.khmdev.APIBase.Almacenes.SQLPlayerData;
-import me.khmdev.APIBase.Almacenes.varSQL;
+import me.khmdev.APIBase.Almacenes.sql.Consulta;
+import me.khmdev.APIBase.Almacenes.sql.varSQL;
+import me.khmdev.APIBase.Almacenes.sql.player.SQLPlayerData;
 import me.khmdev.APIEconomy.Own.APIEconomy;
 
 import org.bukkit.Bukkit;
@@ -58,7 +59,8 @@ public class ControlKills implements Listener {
 				.registerEvents(new ControlKills(), api);
 		for(Player p:Bukkit.getServer().getOnlinePlayers()){
 			String n=p.getName();
-			players.put(n, getKills(n));
+			int i=getKills(n);
+			players.put(n, i);
 		}
 
 	}
@@ -77,13 +79,21 @@ public class ControlKills implements Listener {
 		if (!SQLPlayerData.existUser(name)) {
 			SQLPlayerData.crearUser(name);
 		}else{
-			ResultSet r = SQLPlayerData.getPlayer(name);
-
+			Consulta c = SQLPlayerData.getPlayer(name);
+			if(c==null){
+				Bukkit.getServer().getLogger().
+				severe("ControlKills no pudo conectarse con la bd");
+				return 0;}
 			try {
+				ResultSet r=c.getR();
 				if (r.next()) {
 					s = r.getInt("killStreack");
 				}
 			} catch (SQLException e1) {
+				Bukkit.getServer().getLogger().
+				severe("ControlKills no pudo conectarse con la bd");
+			}finally{
+				c.close();
 			}
 		}
 

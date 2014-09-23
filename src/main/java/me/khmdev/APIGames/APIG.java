@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,29 +14,42 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.khmdev.APIBase.API;
 import me.khmdev.APIBase.Almacenes.Almacen;
 import me.khmdev.APIBase.Almacenes.Central;
-import me.khmdev.APIBase.Almacenes.ConfigFile;
 import me.khmdev.APIBase.Almacenes.Datos;
+import me.khmdev.APIBase.Almacenes.local.ConfigFile;
+import me.khmdev.APIBase.Almacenes.sql.AlmacenSQL;
 import me.khmdev.APIGames.Auxiliar.ConfigGames;
 import me.khmdev.APIGames.Auxiliar.Jugador;
 import me.khmdev.APIGames.Auxiliar.ResetAbandonar;
+import me.khmdev.APIGames.Auxiliar.Variables;
 import me.khmdev.APIGames.Books.SelectorGame;
 import me.khmdev.APIGames.Games.Game;
+import me.khmdev.APIGames.ListenAPIG.ListenInGames;
 import me.khmdev.APIGames.MarcadoresSQL.MarcadoresSQL;
+import me.khmdev.APIGames.MarcadoresSQL.SQLConstant;
 
 public class APIG implements Datos {
 
 	private JavaPlugin api;
 	private HashMap<String, Game> games;
 	private static Almacen cargador;
-	private ConfigFile conf;
+	private ConfigFile conf, confGeneral;
 	private static APIG instance;
 	private static Central central;
 
 	public APIG(JavaPlugin p) {
+		Bukkit.getServer().getPluginManager()
+		.registerEvents(new ListenInGames(), p);
 		api = p;
 		games = new HashMap<String, Game>();
-
+		AlmacenSQL server=API.getInstance().getSql();
+		if(server.isEnable()){
+			for (String s : SQLConstant.sql) {
+				server.sendUpdate(s);
+			}
+		}
 		conf = new ConfigFile(api.getDataFolder(), "Games");
+		confGeneral = new ConfigFile(api.getDataFolder(), "config");
+		Variables.cargarConfig(confGeneral);
 		SelectorGame.init();
 
 		if (API.getInstance().getSql().isEnable()) {
@@ -124,7 +136,7 @@ public class APIG implements Datos {
 			if (sender.getName().equalsIgnoreCase("CONSOLE")) {
 				return true;
 			}
-			Player pl = Bukkit.getPlayer(sender.getName());
+			Player pl = sender instanceof Player?(Player)sender:null;
 			pl.getInventory().addItem(SelectorGame.getItemV());
 			sender.sendMessage("Item enviado");
 
@@ -136,16 +148,18 @@ public class APIG implements Datos {
 				return true;
 			}
 
-			Player pl = Bukkit.getPlayer(sender.getName());
-			
+			Player pl = sender instanceof Player?(Player)sender:null;
+
 			Jugador j = getJugador(pl);
 			if (j != null) {
 				if (ResetAbandonar.canLeave(pl.getName())) {
+					if(!pl.hasPermission("abandonarOP.command")){
 					ResetAbandonar.leave(pl.getName());
+					}
 					j.abandona();
-					j.getPartida().JugadorAbandona(j);
+					j.getPartida().JugadorGoRendirse(j);
 					sender.sendMessage("Has abandonado la partida");
-					
+
 				} else {
 
 					pl.sendMessage("No puedes abandonar hasta dentro de "
@@ -161,7 +175,7 @@ public class APIG implements Datos {
 			if (sender.getName().equalsIgnoreCase("CONSOLE")) {
 				return true;
 			}
-			Player pl = Bukkit.getPlayer(sender.getName());
+			Player pl = sender instanceof Player?(Player)sender:null;
 			pl.getInventory().addItem(SelectorGame.getItemK());
 			sender.sendMessage("Item enviado");
 

@@ -21,6 +21,7 @@ public class init extends JavaPlugin {
 		}
 		apig = new APIG(this);
 		ControlKills.init(this);
+		
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
@@ -43,6 +44,7 @@ public class init extends JavaPlugin {
 	}
 
 	public void onDisable() {
+		
 		if (apig != null) {
 			apig.onDisable();
 			ControlKills.shutdown();
