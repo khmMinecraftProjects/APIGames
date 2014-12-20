@@ -227,7 +227,6 @@ public abstract class Game implements IGame, Datos {
 		s += ("          " + "on" + "\n");
 		s += ("          " + "off" + "\n");
 		s += ("          " + iniciar + "\n");
-		s += ("          " + rA + "/" + rB + "  (Radio)" + "\n");
 		s += ("          " + mp + " (Mapa)" + "\n");
 		s += ("          " + "seg" + " (Mapa)" + "\n");
 		s += ("          " + "sigs" + " (Mapa)" + "\n");
