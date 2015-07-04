@@ -5,6 +5,7 @@ import me.khmdev.APIAuxiliar.Players.AuxPlayer;
 import me.khmdev.APIBase.API;
 import me.khmdev.APIEconomy.ConstantesEconomy;
 import me.khmdev.APIEconomy.Own.APIEconomy;
+import me.khmdev.APIGames.lang.Lang;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
@@ -18,7 +19,9 @@ public class ItemKitShop extends ItemKits {
 	public ItemKitShop(String gam, String s,String p, ItemStack it, InventoryBase inv,
 			double pr) {
 		super(gam, s, it, inv);
-		AuxPlayer.addDescription(item, "Precio: " + price+ ConstantesEconomy.UM);
+		AuxPlayer.addDescription(item, Lang.get("ShopItem.buy").replace("%price%", price+"")
+				.replace("%UM%", ConstantesEconomy.UM+"")
+				.replace("%item%", name));
 		price = pr;
 		if(p!=null){
 			perms=p;
@@ -30,7 +33,9 @@ public class ItemKitShop extends ItemKits {
 			ItemStack[] arm, double pr) {
 		super(gam, s, it, inv, arm);
 		price = pr;
-		AuxPlayer.addDescription(item, "Precio: " + price+ ConstantesEconomy.UM);
+		AuxPlayer.addDescription(item, Lang.get("ShopItem.buy").replace("%price%", price+"")
+				.replace("%UM%", ConstantesEconomy.UM+"")
+				.replace("%item%", name!=null?name:""));
 		if(p!=null){
 			perms=p;
 			AuxPlayer.addDescription(item, "VIP");
@@ -40,7 +45,7 @@ public class ItemKitShop extends ItemKits {
 	public void execute(InventoryClickEvent event) {
 		if (Buy(event.getWhoClicked())) {
 			Bukkit.getServer().getPlayer(event.getWhoClicked().getUniqueId())
-					.sendMessage("Se usara el kit " + name);
+					.sendMessage(Lang.get("ItemKitShop.useKit").replace("%kit%", name));
 			API.setMetadata(event.getWhoClicked(), game + "_kit", name);
 		}
 	}
@@ -49,7 +54,7 @@ public class ItemKitShop extends ItemKits {
 		if(perms!=null && !humanEntity.hasPermission(perms)){
 			Bukkit.getServer()
 			.getPlayer(humanEntity.getUniqueId())
-			.sendMessage("No tienes permiso para comprar este kit");
+			.sendMessage(Lang.get("ItemKitShop.noPerms"));
 			return false;
 		}
 		
@@ -64,14 +69,15 @@ public class ItemKitShop extends ItemKits {
 
 			Bukkit.getServer()
 					.getPlayer(humanEntity.getUniqueId())
-					.sendMessage(
-							"Has comprado el kit " + name + " por " + price
-									+ ConstantesEconomy.UM);
+					.sendMessage(Lang.get("ItemKitShop.buy")
+							.replace("%kit%",name)
+							.replace("%price%",price+"")
+							.replace("%UM%",ConstantesEconomy.UM+""));
 			API.setMetadata(humanEntity, name+"_buy",true);
 			return true;
 		} else {
 			Bukkit.getServer().getPlayer(humanEntity.getUniqueId())
-					.sendMessage("Fondos insuficientes");
+					.sendMessage(Lang.get("ShopItem.noMoney"));
 			return false;
 		}
 	}

@@ -10,6 +10,7 @@ import me.khmdev.APIBase.Almacenes.sql.Consulta;
 import me.khmdev.APIBase.Almacenes.sql.varSQL;
 import me.khmdev.APIBase.Almacenes.sql.player.SQLPlayerData;
 import me.khmdev.APIEconomy.Own.APIEconomy;
+import me.khmdev.APIGames.lang.Lang;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,19 +31,19 @@ public class ControlKills implements Listener {
 		n++;
 		switch (n) {
 		case 10:
-			p.sendMessage("10 kills recibes 10 coins Extras!!");
+			p.sendMessage(Lang.get("ControlKills.10"));
 			APIEconomy.addCash(p.getName(), 10);
 			break;
 		case 100:
-			p.sendMessage("First Hundred recibes 100 coins Extras!!");
+			p.sendMessage(Lang.get("ControlKills.100"));
 			APIEconomy.addCash(p.getName(), 100);
 			break;
 		case 500:
-			p.sendMessage("Por la mitad recibes 250 coins extras!!");
+			p.sendMessage(Lang.get("ControlKills.500"));
 			APIEconomy.addCash(p.getName(), 250);
 			break;
 		case 1000:
-			p.sendMessage("finalmente Mil! Felicidades! +1000 coins!!");
+			p.sendMessage(Lang.get("ControlKills.1000"));
 			APIEconomy.addCash(p.getName(), 1000);
 			break;
 		default:

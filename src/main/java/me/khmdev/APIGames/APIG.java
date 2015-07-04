@@ -26,10 +26,11 @@ import me.khmdev.APIGames.Games.Game;
 import me.khmdev.APIGames.ListenAPIG.ListenInGames;
 import me.khmdev.APIGames.MarcadoresSQL.MarcadoresSQL;
 import me.khmdev.APIGames.MarcadoresSQL.SQLConstant;
+import me.khmdev.APIGames.lang.Lang;
 
 public class APIG implements Datos {
 
-	private JavaPlugin api;
+	private JavaPlugin plug;
 	private HashMap<String, Game> games;
 	private static Almacen cargador;
 	private ConfigFile conf, confGeneral;
@@ -39,7 +40,7 @@ public class APIG implements Datos {
 	public APIG(JavaPlugin p) {
 		Bukkit.getServer().getPluginManager()
 		.registerEvents(new ListenInGames(), p);
-		api = p;
+		plug = p;
 		games = new HashMap<String, Game>();
 		AlmacenSQL server=API.getInstance().getSql();
 		if(server.isEnable()){
@@ -47,14 +48,14 @@ public class APIG implements Datos {
 				server.sendUpdate(s);
 			}
 		}
-		conf = new ConfigFile(api.getDataFolder(), "Games");
-		confGeneral = new ConfigFile(api.getDataFolder(), "config");
+		conf = new ConfigFile(plug.getDataFolder(), "Games");
+		confGeneral = new ConfigFile(plug.getDataFolder(), "config");
 		Variables.cargarConfig(confGeneral);
 		SelectorGame.init();
 
 		if (API.getInstance().getSql().isEnable()) {
 			MarcadoresSQL run = new MarcadoresSQL();
-			int idd = Bukkit.getScheduler().scheduleSyncRepeatingTask(api, run,
+			int idd = Bukkit.getScheduler().scheduleSyncRepeatingTask(plug, run,
 					100, 100L);
 			run.setId(idd);
 		}
@@ -74,7 +75,7 @@ public class APIG implements Datos {
 
 	public void newGame(Game g) {
 		String name = g.getName();
-		api.getLogger().info(name + " cargado");
+		plug.getLogger().info(name + " cargado");
 
 		games.put(g.getName(), g);
 
@@ -158,15 +159,15 @@ public class APIG implements Datos {
 					}
 					j.abandona();
 					j.getPartida().JugadorGoRendirse(j);
-					sender.sendMessage("Has abandonado la partida");
+					sender.sendMessage(Lang.get("APIG.leave"));
 
 				} else {
 
-					pl.sendMessage("No puedes abandonar hasta dentro de "
-							+ ResetAbandonar.timeString(pl.getName()));
+					pl.sendMessage(Lang.get("APIG.leaveWait")
+							.replace("%time%", ResetAbandonar.timeString(pl.getName())+""));
 				}
 			} else {
-				sender.sendMessage("No estas en ninguna partida");
+				sender.sendMessage(Lang.get("APIG.noGame"));
 			}
 			return true;
 		}
@@ -261,6 +262,10 @@ public class APIG implements Datos {
 			}
 		}
 		return null;
+	}
+
+	public JavaPlugin getPlugin() {
+		return plug;
 	}
 
 }

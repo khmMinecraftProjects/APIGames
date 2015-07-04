@@ -536,28 +536,39 @@ public abstract class Partida implements IPartida, Datos {
 		int coins = 0;
 		Player pl = j.getPlayer();
 		String v = Variables.ChatColorStandar;
-		pl.sendMessage(v + "/--------------------------------\\");
-		pl.sendMessage(v + "Coins por participar:        +5");
+		pl.sendMessage(Lang.get("partida.endGame1")
+				.replace("%cl%",v));
+		pl.sendMessage(Lang.get("partida.endGame2")
+				.replace("%cl%",v));
 		coins += 5;
-		pl.sendMessage(v + "Coins por kill:           " + (j.getKills())
-				+ "x2=+" + (j.getKills() * 2));
+		pl.sendMessage(Lang.get("partida.endGame3")
+				.replace("%cl%",v)
+				.replace("%kcoins%",j.getKills()+"")
+				.replace("%ktot%",(j.getKills() * 2)+""));
 		coins += j.getKills() * 2;
 
-		pl.sendMessage(v + "Coins por muerte:  " + (j.getDeaths()) + "x(-1)=-"
-				+ (j.getDeaths()));
+		pl.sendMessage(Lang.get("partida.endGame4")
+				.replace("%cl%",v)
+				.replace("%dcoins%",j.getDeaths()+"")
+				.replace("%dtot%",j.getDeaths()+""));
 		coins -= j.getDeaths();
 
-		pl.sendMessage(v + "Coins por punto:       " + (j.getPuntuacion())
-				+ "x3=+" + (j.getPuntuacion() * 3));
+		pl.sendMessage(Lang.get("partida.endGame5")
+				.replace("%cl%",v)
+				.replace("%pcoins%",j.getPuntuacion()+"")
+				.replace("%ptot%",j.getPuntuacion() * 3+""));
+		
 		coins += j.getPuntuacion() * 3;
 
 		if (j.isGanador() == 1) {
-			pl.sendMessage(v + "Coins por ganar:            +10");
+			pl.sendMessage(Lang.get("partida.endGamew")
+					.replace("%cl%",v));
 			coins += 10;
 		}
 		j.getPlayer().sendMessage(
-				v + Lang.get("coins_player").replace("%Coins%", "" + coins));
-		pl.sendMessage(v + "\\--------------------------------/");
+				v + Lang.get("partida.endGame6").replace("%Coins%", "" + coins));
+		pl.sendMessage(Lang.get("partida.endGame7")
+				.replace("%cl%",v));
 
 		return coins;
 	}

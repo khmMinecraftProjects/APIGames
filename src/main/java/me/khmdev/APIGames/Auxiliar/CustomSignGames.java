@@ -15,6 +15,7 @@ import me.khmdev.APIGames.Auxiliar.ConstantesGames.Estado;
 import me.khmdev.APIGames.Games.IGame;
 import me.khmdev.APIGames.Partidas.IPartida;
 import me.khmdev.APIGames.Partidas.Partida;
+import me.khmdev.APIGames.lang.Lang;
 
 public class CustomSignGames extends CustomSign {
 	IGame game;
@@ -55,8 +56,10 @@ public class CustomSignGames extends CustomSign {
 					if ((act = API.getMetadata(event.getPlayer(), "Jugando")) != null) {
 						Partida par = (Partida) game.getPartida(act.asString());
 						if (par != null && par.JugadorEsta(p.getName())) {
+							
 							event.getPlayer().sendMessage(
-									"Ya esta en la partida " + act.asString());
+									Lang.get("CustomSign.inThis")
+									.replace("%partida%", act.asString()));
 
 							return;
 						} else {
@@ -67,7 +70,7 @@ public class CustomSignGames extends CustomSign {
 					if (!p.JugadorEsta(event.getPlayer().getName())) {
 						if(APIG.getInstance().getJugador(event.getPlayer())!=null){
 							event.getPlayer().sendMessage(
-									"Ya esta en otra partida");
+									Lang.get("CustomSign.inOther"));
 							event.getPlayer().playSound(
 									event.getPlayer().getLocation(), Sound.ANVIL_LAND,
 									1, 1);
@@ -85,7 +88,8 @@ public class CustomSignGames extends CustomSign {
 						p.nuevoGoJugador(event.getPlayer());
 					} else {
 						event.getPlayer().sendMessage(
-								"Ya esta en la partida " + p.getName());
+								Lang.get("CustomSign.inThis")
+								.replace("%partida%", p.getName()));
 						event.getPlayer().playSound(
 								event.getPlayer().getLocation(), Sound.ANVIL_LAND,
 								1, 1);
@@ -93,8 +97,8 @@ public class CustomSignGames extends CustomSign {
 				} else {
 
 					event.getPlayer().sendMessage(
-							"No se ha podido entrar a la partida "
-									+ p.getName());
+							Lang.get("CustomSign.error")
+							.replace("%partida%", p.getName()));
 					event.getPlayer().playSound(
 							event.getPlayer().getLocation(), Sound.ANVIL_LAND,
 							1, 1);

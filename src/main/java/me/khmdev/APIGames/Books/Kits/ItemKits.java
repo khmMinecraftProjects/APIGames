@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import me.khmdev.APIAuxiliar.Inventory.InventoryBase;
 import me.khmdev.APIAuxiliar.Inventory.CustomInventorys.CustomItem;
 import me.khmdev.APIBase.API;
+import me.khmdev.APIGames.lang.Lang;
 
 public class ItemKits extends CustomItem {
 	protected ItemStack[] armor;
@@ -37,7 +38,7 @@ public class ItemKits extends CustomItem {
 		//event.getWhoClicked().getInventory().setArmorContents(armor);
 		//event.getWhoClicked().getInventory().setContents(inventory);
 		Bukkit.getServer().getPlayer(
-		event.getWhoClicked().getUniqueId()).sendMessage("Se usara el kit "+name);
+		event.getWhoClicked().getUniqueId()).sendMessage(Lang.get("ItemKitShop.useKit").replace("%kit%", name));
 		API.setMetadata(event.getWhoClicked(), game+"_kit", name);
 	}
 

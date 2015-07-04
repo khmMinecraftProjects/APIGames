@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import me.khmdev.APIBase.API;
+import me.khmdev.APIGames.lang.Lang;
 
 public class ItemVentage extends ShopItem {
 	private Ventaja ventaja;
@@ -42,7 +43,7 @@ public class ItemVentage extends ShopItem {
 	public void execute(InventoryClickEvent event) {
 		if (API.getMetadata(event.getWhoClicked(), ventaja.getName()) != null) {
 			Bukkit.getServer().getPlayer(event.getWhoClicked().getUniqueId())
-					.sendMessage("Ya lo has comprado");
+					.sendMessage(Lang.get("ItemVentage.buyYet"));
 			return;
 		}
 		if (Buy(event.getWhoClicked())) {

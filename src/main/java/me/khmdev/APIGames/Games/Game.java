@@ -95,11 +95,11 @@ public abstract class Game implements IGame, Datos {
 		if (e && !enable) {
 			iniListen();
 			changeEnablePartidas(e);
-			api.getLogger().info(name + " activado");
+			APIG.getInstance().getPlugin().getLogger().info(name + " activado");
 			APIG.getInstance().getConf().saveConfig();
 		} else if (!e && enable) {
 			disableListen();
-			api.getLogger().info(name + " desactivado");
+			APIG.getInstance().getPlugin().getLogger().info(name + " desactivado");
 			changeEnablePartidas(e);
 			APIG.getInstance().getConf().saveConfig();
 		}

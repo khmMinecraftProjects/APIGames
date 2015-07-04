@@ -14,6 +14,7 @@ import me.khmdev.APIAuxiliar.Inventory.CustomInventorys.CItems;
 import me.khmdev.APIAuxiliar.Inventory.CustomInventorys.CustomInventory;
 import me.khmdev.APIGames.Auxiliar.IJugador;
 import me.khmdev.APIGames.Auxiliar.Jugador;
+import me.khmdev.APIGames.lang.Lang;
 
 public class GestorDeVentajas {
 	List<Ventaja> ventajas;
@@ -22,7 +23,7 @@ public class GestorDeVentajas {
 	public GestorDeVentajas(String game,Inventory inv){
 		ventajas=new LinkedList<>();
 		jugadores=new HashMap<>();
-		inventory=new CustomInventory("Ventajas "+game);
+		inventory=new CustomInventory(Lang.get("GestorDeVentajas.name").replace("%game%",game));
 		//inventory.addItem(new ItemOpenInventory(AuxPlayer.getItem(Material.STICK,
 		//		"&CVolver"), inv));
 		CItems.addInventorys(inventory);
@@ -44,7 +45,7 @@ public class GestorDeVentajas {
 			Ventaja v=it.next();
 			if(v.have(j.getPlayer())){
 				v.use(j);
-				j.getPlayer().sendMessage("Usada ventaja: "+v.getName());
+				j.getPlayer().sendMessage(Lang.get("GestorDeVentajas.use").replace("%ventaja%",v.getName()));
 				addVP(j,v.getNew());
 			}
 		}

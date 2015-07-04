@@ -1,5 +1,6 @@
 package me.khmdev.APIGames;
 
+import me.khmdev.APIGames.lang.Lang;
 import me.khmdev.APIGames.MarcadoresSQL.ControlKills;
 
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ public class init extends JavaPlugin {
 	private APIG apig;
 
 	public void onEnable() {
+		Lang.init(this);
 		if (!hasPluging("APIBase") || !hasPluging("APIEconomy")
 				|| !hasPluging("APIAuxiliar") || !hasPluging("APIMaps")) {
 			getLogger().severe(

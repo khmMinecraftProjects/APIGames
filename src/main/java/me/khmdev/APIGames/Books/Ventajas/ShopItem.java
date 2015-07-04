@@ -13,6 +13,7 @@ import me.khmdev.APIAuxiliar.Inventory.CustomInventorys.CustomItem;
 import me.khmdev.APIBase.Auxiliar.Auxiliar;
 import me.khmdev.APIEconomy.ConstantesEconomy;
 import me.khmdev.APIEconomy.Own.APIEconomy;
+import me.khmdev.APIGames.lang.Lang;
 
 public class ShopItem extends CustomItem {
 	double price;
@@ -21,12 +22,12 @@ public class ShopItem extends CustomItem {
 	public ShopItem(ItemStack it,double pric){
 		item=it;
 		price=pric;
-
 		if(item==null){return;}
 		item2 = item.clone();
 		
 		ItemMeta meta = item.getItemMeta();
-		meta.setLore(Arrays.asList("Precio: " + price+ConstantesEconomy.UM));
+		meta.setLore(Arrays.asList(Lang.get("ShopItem.price").replace("%price%", price+"")
+				.replace("%UM%", ConstantesEconomy.UM+"")));
 		item.setItemMeta(meta);
 	}
 	public double getPrice(){
@@ -59,12 +60,13 @@ public class ShopItem extends CustomItem {
 			Bukkit.getServer()
 					.getPlayer(humanEntity.getUniqueId())
 					.sendMessage(
-							"Has comprado " + name + " por "
-									+ price + ConstantesEconomy.UM);
+							Lang.get("ShopItem.buy").replace("%price%", price+"")
+							.replace("%UM%", ConstantesEconomy.UM+"")
+							.replace("%item%", name!=null?name:""));
 			return true;
 		} else {
 			Bukkit.getServer().getPlayer(humanEntity.getUniqueId())
-					.sendMessage("Fondos insuficientes");
+					.sendMessage(Lang.get("ShopItem.noMoney"));
 			return false;
 		}
 	}
